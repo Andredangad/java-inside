@@ -3,3 +3,7 @@ jdk: openjdk15
 
 script:
   - mvn package
+
+os:
+  - linux
+  - osx

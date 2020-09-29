@@ -45,10 +45,11 @@ public class JSONPrinter {
     }
     public static String toJSON(Record record) {
         // return Arrays.stream(record.getClass().getRecordComponents()).map(e -> e.toString()).collect(Collectors.joining( " "));
-        return Arrays.stream(record.getClass().getRecordComponents())
-                .map(RecordComponent::getAccessor).map(e ->e.getName() + " " + invokeAccessor(e, record))
+        return "{ " + Arrays.stream(record.getClass().getRecordComponents())
+                .map(RecordComponent::getAccessor).map(e ->"\""+ e.getName() + "\": " + "\""+ invokeAccessor(e, record)+ "\"")
                 .map(e -> e.toString())
-                .collect(Collectors.joining(" "));
+                .collect(Collectors.joining(", ")) + " }"
+                ;
     }
 
     public static void main(String[] args) {

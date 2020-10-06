@@ -17,4 +17,33 @@ public class MethodHandleTests {
         assertEquals(methodType(int.class, String.class), mh.type());
 
     }
+
+    @Test
+    public void findVirtualTest() throws NoSuchMethodException, IllegalAccessException {
+        var lookup = MethodHandles.lookup();
+        var mh = lookup.findVirtual(String.class,
+                "toUpperCase", methodType(String.class));
+        assertEquals(methodType(String.class, String.class), mh.type());
+
+    }
+
+    @Test
+    public void invokeExactStaticTest() throws Throwable {
+        var lookup = MethodHandles.lookup();
+        var mh = lookup.findStatic(Integer.class,
+                "parseInt", methodType(int.class, String.class));
+        var res = (int)mh.invokeExact("5");
+        assertEquals(5,res);
+
+    }
+
+    @Test
+    public void  invokeExactStaticWrongArgumentTest() throws Throwable {
+        var lookup = MethodHandles.lookup();
+        var mh = lookup.findStatic(Integer.class,
+                "parseInt", methodType(int.class));
+        var res = (int)mh.invokeExact("5");
+        assertEquals(5,res);
+
+    }
 }

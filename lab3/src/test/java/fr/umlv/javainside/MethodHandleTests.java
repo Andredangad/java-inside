@@ -15,7 +15,8 @@ public class MethodHandleTests {
     public void findStaticTest() throws NoSuchMethodException, IllegalAccessException {
         var lookup = MethodHandles.lookup();
         var mh = lookup.findStatic(Integer.class,
-                "parseInt", methodType(int.class, String.class));
+                "" +
+                        "", methodType(int.class, String.class));
         assertEquals(methodType(int.class, String.class), mh.type());
 
     }
@@ -96,4 +97,102 @@ public class MethodHandleTests {
                 }));
 
     }
+
+    @Test
+    public void insertAndInvokeStaticTest() throws Throwable {
+        var lookup = MethodHandles.lookup();
+        var mh = lookup.findStatic(Integer.class,
+                "parseInt", methodType(int.class, String.class));
+        Assertions.assertAll(
+                () -> {
+                    assertEquals(123, MethodHandles.insertArguments(mh, 0, "123").invoke());
+                },
+                () -> assertThrows(ClassCastException.class, () -> {
+                    var s =MethodHandles.insertArguments(mh, 0, 123).invoke();
+                }));
+
+
+    }
+
+    @Test
+    public void bindToAndInvokeVirtualTest() throws Throwable {
+        var lookup = MethodHandles.lookup();
+        var mh = lookup.findVirtual(String.class,
+                "toUpperCase", methodType(String.class));
+        Assertions.assertAll(
+                () -> {
+                    assertEquals("AAA", mh.bindTo("aaa").invoke());
+                },
+                () -> assertThrows(ClassCastException.class, () -> {
+                    var s =mh.bindTo(123).invoke();
+                }));
+
+
+    }
+
+    @Test
+    public void dropAndInvokeStaticTest() throws Throwable {
+        var lookup = MethodHandles.lookup();
+        var mh = lookup.findStatic(Integer.class,
+                "parseInt", methodType(int.class, String.class));
+        Assertions.assertAll(
+                () -> {
+                    assertEquals(123, MethodHandles.dropArguments(mh, 0, Integer.class).invoke(123, "123"));
+                },
+                () -> assertThrows(WrongMethodTypeException.class, () -> {
+                    var s = MethodHandles.dropArguments(mh, 0, Integer.class).invoke(123, 123);
+                }));
+
+
+    }
+
+    @Test
+    public void dropAndInvokeVirtualTest() throws Throwable {
+        var lookup = MethodHandles.lookup();
+        var mh = lookup.findVirtual(String.class,
+                "toUpperCase", methodType(String.class));
+        Assertions.assertAll(
+                () -> {
+                    assertEquals("AAA", MethodHandles.dropArguments(mh, 0, String.class).invoke("0", "aaa"));
+                },
+                () -> assertThrows(WrongMethodTypeException.class, () -> {
+                    var s = MethodHandles.dropArguments(mh, 0, String.class).invoke(0, "aaa");
+                }));
+
+
+    }
+
+    @Test
+    public void asTypeAndInvokeExactStaticTest() throws Throwable {
+        var lookup = MethodHandles.lookup();
+        var mh = lookup.findStatic(Integer.class,
+                "parseInt", methodType(int.class, String.class));
+        Assertions.assertAll(
+                () -> {
+                    assertEquals(123, (Integer)mh.asType(methodType(Integer.class, String.class)).invokeExact("123"));
+                },
+                () -> assertThrows(WrongMethodTypeException.class, () -> {
+                    var s = (Integer)mh.asType(methodType(Integer.class, String.class)).invokeExact(123);
+                }));
+
+
+    }
+    @Test
+    public void invokeExactConstantTest() throws Throwable {
+        var lookup = MethodHandles.lookup();
+        var mh = lookup.findStatic(Integer.class,
+                "parseInt", methodType(int.class, String.class));
+        Assertions.assertAll(
+                () -> {
+                    assertEquals(42, MethodHandles.constant(Integer.class, 42).invoke());
+                },
+                () -> assertThrows(ClassCastException.class, () -> {
+                    var s = MethodHandles.constant(Integer.class, "42").invoke();
+                }));
+
+
+    }
+
+
+
 }

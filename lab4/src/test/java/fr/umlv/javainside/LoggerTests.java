@@ -15,7 +15,7 @@ class LoggerTests {
         assertNotNull(logger);
     }
 
-    @Test
+  /*  @Test
     public void ofError(){
         class Foo{}
         assertAll(
@@ -29,7 +29,7 @@ class LoggerTests {
                     Logger.of(Foo.class, null);
                 }));
 
-    }
+    }*/
     @Test
     public void log(){
         class Foo{}

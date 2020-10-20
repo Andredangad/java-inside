@@ -27,7 +27,7 @@ import static java.lang.invoke.MethodType.methodType;
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @State(Scope.Benchmark)
-class LoggerBenchMark {
+public class LoggerBenchMark {
     @Benchmark
     public void no_op() {
         // empty
